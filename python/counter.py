@@ -1,3 +1,7 @@
+"""
+Cria uma implementação similiar ao object Counter do modulo collections.
+https://docs.python.org/3.8/library/collections.html#collections.Counter
+"""
 
 from collections.abc import MutableMapping
 from collections.abc import Iterable
