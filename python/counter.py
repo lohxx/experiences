@@ -2,6 +2,7 @@
 Cria uma implementação similiar ao object Counter do modulo collections.
 https://docs.python.org/3.8/library/collections.html#collections.Counter
 """
+
 import sys
 
 from collections.abc import MutableMapping
@@ -56,10 +57,10 @@ class Counter(MutableMapping):
         return iter(self.__dict__)
 
     def __len__(self):
-        pass
+        return len(self.__dict__)
 
-    def __setitem__(self):
-        pass
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
 
     def __repr__(self):
         return f'Counter({str(self.__dict__)})'
