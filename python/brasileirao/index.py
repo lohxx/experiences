@@ -13,8 +13,6 @@ from api_reposta import resposta
 
 app = Flask(__name__)
 
-AVALIABLE_REPRESENTATIONS = ['text/html', 'application/json']
-
 
 def checkContentType(func):
     @wraps(func)
@@ -25,7 +23,7 @@ def checkContentType(func):
     return deco
 
 
-def checkAcceptHeader(func):
+def checkAcceptHeader(representations):
     """
         Valida se o servidor tem alguma das representações especificadas
         pelo cliente atraves do header Accept.
@@ -39,41 +37,47 @@ def checkAcceptHeader(func):
         Returns:
             str/dict: resposta da função decorada.
     """
-    @wraps(func)
-    def deco(*args, **kwargs):    
-        global qFactor
 
-        mimes_fav = []
-        AcceptedRepresentations = request.headers.get('Accept', '').split(',')
+    def decorator(func):
 
-        for content_type in AcceptedRepresentations:
-            try:
-                mime, qfactor = content_type.split(';')
-            except ValueError:
-                mime, qfactor = content_type, 'q=0'
+        @wraps(func)
+        def deco(*args, **kwargs):    
+            global qFactor
 
-            mime = mime.strip()
+            if not representations:
+                raise ValueError('É necessario fornecer as representações disponiveis')
 
-            if mime in AVALIABLE_REPRESENTATIONS:
-                mimes_fav.append((mime, float(qfactor.split('=')[-1])))
+            mimes_fav = []
+            AcceptedRepresentations = request.headers.get('Accept', '').split(',')
 
-            elif '*/*' == mime:
-                mimes_fav.append((mime, 0))
+            for content_type in AcceptedRepresentations:
+                try:
+                    mime, qfactor = content_type.split(';')
+                except ValueError:
+                    mime, qfactor = content_type, 'q=0'
 
-        mimes_fav.sort(key=lambda rep: rep[1], reverse=True)
+                mime = mime.strip()
 
-        if mimes_fav:
-            qFactor = mimes_fav[0][0]
-            return func(*args, **kwargs)
-        
-        raise werkzeug.exceptions.NotAcceptable(
-            f"Representações disponíveis: {', '.join(AVALIABLE_REPRESENTATIONS)}")
+                if mime in representations:
+                    mimes_fav.append((mime, float(qfactor.split('=')[-1])))
 
-    return deco
+                elif '*/*' == mime:
+                    mimes_fav.append((mime, 0))
 
+            mimes_fav.sort(key=lambda rep: rep[1], reverse=True)
+
+            if mimes_fav:
+                qFactor = mimes_fav[0][0]
+                return func(*args, **kwargs)
+
+            raise werkzeug.exceptions.NotAcceptable(
+                f"Representações disponíveis: {', '.join(representations)}")
+
+        return deco
+    return decorator
 
 @app.route('/api/classificacoes')
-@checkAcceptHeader
+@checkAcceptHeader(['text/html', 'application/json'])
 def classificacoes():
     if 'text/html' == qFactor:
         return render_template(
