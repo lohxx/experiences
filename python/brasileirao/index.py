@@ -25,18 +25,22 @@ def checkContentType(func):
 
 def checkAcceptHeader(representations):
     """
-        Valida se o servidor tem alguma das representações especificadas
-        pelo cliente atraves do header Accept.
+    Valida se o servidor tem alguma das representações especificadas
+    pelo cliente atraves do header Accept.
 
-        As atuais representações disponibilizadas pelo servidor são: text/html e application/json.
+    Args:
+        representations (list): As representações disponibilizadas pelo servidor.
 
-        Raises:
-            werkzeug.exceptions.NotAcceptable: Retorna o status code 406 para os clientes
-            quando não temos a representação desejada disponivel.
 
-        Returns:
-            str/dict: resposta da função decorada.
-    """
+    Raises:
+        ValueError: Exception se a lista de representações estiver vazia.
+
+        werkzeug.exceptions.NotAcceptable: Retorna o status code 406 para os clientes
+        quando não temos a representação desejada disponivel.
+
+    Returns:
+        str/dict: resposta da função decorada.
+    """    
 
     def decorator(func):
 
