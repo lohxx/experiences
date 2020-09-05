@@ -48,9 +48,7 @@ def checkAcceptHeader(representations):
                 raise ValueError('É necessario fornecer as representações disponiveis')
 
             mimes_fav = []
-            AcceptedRepresentations = request.headers.get('Accept', '').split(',')
-
-            for content_type in AcceptedRepresentations:
+            for content_type in request.headers.get('Accept', '').split(','):
                 try:
                     mime, qfactor = content_type.split(';')
                 except ValueError:
@@ -76,6 +74,7 @@ def checkAcceptHeader(representations):
         return deco
     return decorator
 
+
 @app.route('/api/classificacoes')
 @checkAcceptHeader(['text/html', 'application/json'])
 def classificacoes():
@@ -89,9 +88,9 @@ def classificacoes():
 
 
 @app.route('/api/rodadas')
-@checkAcceptHeader
+@checkAcceptHeader(['application/json'])
 def rodadas():
-    return resposta['rodadas']
+    return jsonify(resposta['rodadas'])
 
 
 if __name__ == '__main__':
