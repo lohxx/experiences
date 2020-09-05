@@ -1,3 +1,5 @@
+"Pratica dos conceitos de web apis aprendidos"
+
 from collections import OrderedDict
 
 import re
@@ -31,7 +33,8 @@ def checkAcceptHeader(func):
         As atuais representações disponibilizadas pelo servidor são: text/html e application/json.
 
         Raises:
-            werkzeug.exceptions.NotAcceptable: Retorna o status code 406 para os clientes.
+            werkzeug.exceptions.NotAcceptable: Retorna o status code 406 para os clientes
+            quando não temos a representação desejada disponivel.
 
         Returns:
             str/dict: resposta da função decorada.
@@ -77,13 +80,9 @@ def classificacoes():
             'index.html', 
             classificacao=resposta['classificacoes'])
 
-    elif 'application/json' == qFactor:
+    elif 'application/json' == qFactor or '*/*' == qFactor:
         return jsonify(resposta['classificacoes'])
 
-    # O cliente aceita qualquer tipo de representação, então mandamos JSON por padrão.
-    elif '*/*' == qFactor:
-        return jsonify(resposta['classificacoes'])
- 
 
 @app.route('/api/rodadas')
 @checkAcceptHeader
