@@ -15,6 +15,13 @@ app = Flask(__name__)
 
 
 def checkContentType(func):
+    """
+    
+    Valida o payload enviado para o servidor.
+
+    Returns:
+        [type]: [description]
+    """    
     @wraps(func)
     def deco(*args, **kwargs):
         ContentTypeHeader = request.headers.get('Content-Type', '')
@@ -46,7 +53,7 @@ def checkAcceptHeader(representations):
 
         @wraps(func)
         def deco(*args, **kwargs):    
-            global qFactor
+            global contentType
 
             if not representations:
                 raise ValueError('É necessario fornecer as representações disponiveis')
@@ -69,7 +76,7 @@ def checkAcceptHeader(representations):
             mimes_fav.sort(key=lambda rep: rep[1], reverse=True)
 
             if mimes_fav:
-                qFactor = mimes_fav[0][0]
+                contentType = mimes_fav[0][0]
                 return func(*args, **kwargs)
 
             raise werkzeug.exceptions.NotAcceptable(
@@ -82,12 +89,12 @@ def checkAcceptHeader(representations):
 @app.route('/api/classificacoes')
 @checkAcceptHeader(['text/html', 'application/json'])
 def classificacoes():
-    if 'text/html' == qFactor:
+    if 'text/html' == contentType:
         return render_template(
             'index.html', 
             classificacao=resposta['classificacoes'])
 
-    elif 'application/json' == qFactor or '*/*' == qFactor:
+    elif 'application/json' == contentType or '*/*' == contentType:
         return jsonify(resposta['classificacoes'])
 
 
