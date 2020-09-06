@@ -5,7 +5,7 @@ https://docs.python.org/3.8/library/collections.html#collections.Counter
 
 import sys
 
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Int
 from collections.abc import MutableMapping
 from collections.abc import Iterable
 
@@ -29,22 +29,7 @@ class Counter(MutableMapping):
         for i in lista:
             self.__dict__[i] = list.count(i)
 
-    def _coun_large_strs(self, strs: str) -> None:
-        end_slice = 100
-        max_chunks = len(strs)/100
-
-        for i in range(max_chunks, step=100):
-            sliced_text = strs[i: end_slice]
-            if sliced_text:
-                # Qual é o criterio para a contagem de palavras? Espaços?? 
-                pass
-            end_slice += 100
-
     def _count_str(self, strs: str) -> None:
-        if sys.getsizeof(strs) >= 1e+9:
-            self._count_large_strs(strs)
-            return
-
         splited_letters = [letter for letter in strs]
         for i in splited_letters:
             self.__dict__[i] = strs.count(i)
@@ -58,7 +43,7 @@ class Counter(MutableMapping):
     def __iter__(self):
         return iter(self.__dict__)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.__dict__)
 
     def __setitem__(self, key: Any, value: Any):
