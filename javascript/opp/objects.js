@@ -8,7 +8,7 @@ var johnSmith = {
 		city: "London",
 		country: "United Kingdom"
 	},
-	displayFullName: function() {
+	displayFullName: function () {
 		return `${this.name} ${this.surname}`;
 	}
 };
@@ -21,7 +21,7 @@ var marioRossi = {
 		city: "Roma",
 		country: "Italy"
 	},
-	displayFullName: function() {
+	displayFullName: function () {
 		return `${this.name} ${this.surname}`;
 	}
 }
@@ -34,13 +34,13 @@ function Person(name, surname, address) {
 	this.name = name;
 	this.surname = surname;
 	this.address = address;
-
-	this.displayFullName = function() {
+	
+	this.displayFullName = function () {
 		return `${this.name} ${this.surname}`;
 	}
 }
 
-Person.prototype.greets = function() {
+Person.prototype.greets = function () {
 	console.log(`Hello ${this.displayFullName()}!`);
 };
 
@@ -51,13 +51,13 @@ class Person2 {
 		this.name = name;
 		this.surname = surname;
 	}
-
+	
 	displayFullName() {
 		return `${this.name} ${this.surname}`;
 	}
-
+	
 	greets() {
-		console.log(`Hello ${this.displayFullName()}!`);	
+		console.log(`Hello ${this.displayFullName()}!`);
 	}
 }
 
