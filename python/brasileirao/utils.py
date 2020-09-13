@@ -1,8 +1,44 @@
 from functools import wraps
 
-from flask import request
-
+from flask import request, session
+import datetime
+import base64
 import werkzeug
+
+
+def doBasicAuth(b64data):
+    _, encodedArgs = b64data.split('Basic')
+    user, password = str(base64.b64decode(encodedArgs.strip())).split(':')
+    print(user, password)
+
+    if user and password:
+        return user, password, True
+
+    return None, None, False
+
+
+def authenticationRequired(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        authenticated = None
+
+        if request.args.get('api_key'):
+            authenticated = True
+
+        elif request.headers.get('Authorization'):
+            authorization = request.headers.get('Authorization')
+
+            if 'Basic' in authorization:
+                user, passw, authenticated = doBasicAuth(authorization)
+
+        # Falta HMAC
+
+        if not authenticated:
+            return 'É necessario se autenticar', 401
+
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def checkContentType(accepted_reps):

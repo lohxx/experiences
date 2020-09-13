@@ -10,6 +10,7 @@ from flask import session, request
 from api_reposta import resposta
 from utils import checkContentType
 from utils import checkAcceptHeader
+from utils import authenticationRequired
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ api = Blueprint('api', __name__, url_prefix='/api')
 
 
 @api.route('/classificacoes')
+@authenticationRequired
 @checkAcceptHeader(['text/html', 'application/json'])
 def classificacoes(contentType):
     if 'text/html' == contentType:
@@ -29,11 +31,13 @@ def classificacoes(contentType):
 
 
 @api.route('/rodadas')
+@authenticationRequired
 def rodadas():
     return jsonify(resposta['rodadas'])
 
 
 @api.route('/rodadas/<numero>')
+@authenticationRequired
 def rodada(numero):
     """
     Agenda notificação para uma rodada especifica.
@@ -53,6 +57,7 @@ def rodada(numero):
 
 
 app.register_blueprint(api)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
