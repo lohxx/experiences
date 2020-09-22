@@ -14,6 +14,19 @@ function Developer(name, surname, knownLanguage) {
     this.knownLanguage = knownLanguage;
 }
 
+
+function Student(name, surname, subjectOfStudy) {
+    Person.apply(this, arguments);
+    this.subjectOfStudy = subjectOfStudy;
+}
+
+// Herança multipla usando funções construtoras.
+function DevStudent(name, surname, knownLanguage, subjectOfStudy) {
+    Developer.call(this, name, surname, knownLanguage);
+    Student.call(this, name, surname, subjectOfStudy);
+}
+
+
 Developer.prototype = Object.create(Person.prototype);
 Developer.prototype.constructor = Developer;
 Developer.prototype.getFullName = function() {
@@ -62,3 +75,12 @@ class Developer1 extends Person1 {
         this.knownLanguage = knownLanguage;
     }
 }
+
+// Herança multipla no es6
+class DevStudent1 extends Person, Developer1 {
+
+}
+
+let johnSmith = new DevStudent("John", "Smith", "C#", "JavaScript");
+console.log(johnSmith.knownLanguage);
+console.log(johnSmith.subjectOfStudy);
