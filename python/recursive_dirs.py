@@ -1,7 +1,7 @@
 import os
 
 
-def get_dirs(files: os.DirEntry, all_children_looked: int=0, rec_dir: os.DirEntry=None):
+def look_dirs(files: os.DirEntry, all_children_looked: int=0, rec_dir: os.DirEntry=None):
     """
     Olha diretorios de forma recursiva.
 
@@ -23,7 +23,7 @@ def get_dirs(files: os.DirEntry, all_children_looked: int=0, rec_dir: os.DirEntr
                 if i.is_file():
                     print(f'{file.name}/{i.name}')
                 else:
-                    get_dirs(os.scandir(i), rec_dir=i)
+                    look_dirs(os.scandir(i), rec_dir=i)
 
     while all_children_looked < len(dirs):
         file = dirs[all_children_looked]
@@ -35,4 +35,4 @@ def get_dirs(files: os.DirEntry, all_children_looked: int=0, rec_dir: os.DirEntr
 
 main_root = os.getcwd()
 looked_dirs = []
-get_dirs(os.scandir(main_root))
+look_dirs(os.scandir(main_root))
