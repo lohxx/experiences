@@ -6,6 +6,34 @@ import base64
 import werkzeug
 
 
+def rateLimit(callsPerSeconds):
+    from .index import cache, app
+
+    def decorator(func):
+        @wraps(func)
+        def deco(*args, **kwargs):
+            with app.app_context():
+                entries = cache.get(request.remote_addr)
+                if not entries:
+                    cache.set(request.remote_addr, {'calls': 1}, timeout=60)
+                    entries = {'calls': 1}
+                    return func(*args, **kwargs)
+
+                total_calls = entries['calls']
+
+                if total_calls >= callsPerSeconds:
+                    raise werkzeug.exceptions.TooManyRequests
+
+                print(total_calls)
+            import pdb; pdb.set_trace()
+            cache.set(request.remote_addr, {'calls': total_calls + 1})
+            return func(*args, **kwargs)
+        
+        return deco
+
+    return decorator
+
+
 def doBasicAuth(b64data):
     _, encodedArgs = b64data.split('Basic')
     user, password = str(base64.b64decode(encodedArgs.strip())).split(':')

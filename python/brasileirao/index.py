@@ -11,15 +11,27 @@ from api_reposta import resposta
 from utils import checkContentType
 from utils import checkAcceptHeader
 from utils import authenticationRequired
+from utils import rateLimit
+from flask_caching import Cache
+
+
+config = {
+    "DEBUG": True,
+    "CACHE_TYPE": "simple",
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
 
 app = Flask(__name__)
-
+app.config.from_mapping(config)
 api = Blueprint('api', __name__, url_prefix='/api')
+
+cache = Cache(config={'CACHE_TYPE': 'simple', 'timeout': 60})
 
 
 @api.route('/classificacoes')
-@authenticationRequired
+#@authenticationRequired
 @checkAcceptHeader(['text/html', 'application/json'])
+@rateLimit(2)
 def classificacoes(contentType):
     if 'text/html' == contentType:
         return render_template(
@@ -57,6 +69,7 @@ def rodada(numero):
 
 
 app.register_blueprint(api)
+cache.init_app(app)
 
 
 if __name__ == '__main__':
